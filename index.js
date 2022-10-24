@@ -4,6 +4,7 @@ import { abi, contractAddress } from "./constants.js";
 document.getElementById("connect").onclick = connect;
 document.getElementById("balance").onclick = getBalance;
 document.getElementById("fund").onclick = fund;
+document.getElementById("withdraw").onclick = withdraw;
 const status = document.getElementById("status");
 
 async function connect() {
@@ -25,6 +26,23 @@ async function fund() {
 
   contract
     .fund({ value: ethers.utils.parseEther(amount) })
+    .then((transaction) => {
+      log("Transaction sent. Waiting for confirmation...");
+      return transaction.wait(1);
+    })
+    .then((transactionReceipt) => {
+      log("Confirmed!");
+    })
+    .catch((error) => log(error.message));
+}
+
+async function withdraw() {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+  const contract = new ethers.Contract(contractAddress, abi, signer);
+
+  contract
+    .withdraw()
     .then((transaction) => {
       log("Transaction sent. Waiting for confirmation...");
       return transaction.wait(1);
