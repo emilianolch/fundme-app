@@ -21,10 +21,12 @@ async function fund() {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
   const contract = new ethers.Contract(contractAddress, abi, signer);
-  const sendValue = ethers.utils.parseEther("10");
+  const amount = document.getElementById("amount").value;
+
+  if (amount === "") return;
 
   contract
-    .fund({ value: sendValue })
+    .fund({ value: ethers.utils.parseEther(amount) })
     .then((transaction) => {
       log("Transaction sent. Waiting for confirmation...");
       return transaction.wait(1);
