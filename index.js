@@ -1,12 +1,10 @@
 import { ethers } from "./ethers-5.1.esm.min.js";
 import { abi, contractAddress } from "./constants.js";
 
-const connectBtn = document.getElementById("connect");
-const fundBtn = document.getElementById("fund");
+document.getElementById("connect").onclick = connect;
+document.getElementById("balance").onclick = getBalance;
+document.getElementById("fund").onclick = fund;
 const status = document.getElementById("status");
-
-connectBtn.addEventListener("click", connect);
-fundBtn.addEventListener("click", fund);
 
 async function connect() {
   if (window.ethereum) {
@@ -35,6 +33,13 @@ async function fund() {
       log("Confirmed!");
     })
     .catch((error) => log(error.message));
+}
+
+function getBalance() {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  provider
+    .getBalance(contractAddress)
+    .then((balance) => log(`${ethers.utils.formatEther(balance)} ETH`));
 }
 
 function log(message) {
